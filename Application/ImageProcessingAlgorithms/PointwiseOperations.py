@@ -71,7 +71,6 @@ def colorHistEq(image):
 
         v_histogram = np.histogram(image_hsv[:, :, 2], bins=256, range=(0, 256/255))[0]
         v_histogram_cum = np.cumsum(v_histogram/no_pixels)
-        print(v_histogram_cum)
         lut = np.round(((v_histogram_cum - v_histogram_cum[0])/(1 - v_histogram_cum[0])) * 255)
 
         for i in range(image_hsv.shape[0]):

@@ -28,21 +28,25 @@ def plotRowValues(image, leftClickPosition):
     imageShapeLen = len(image.shape)
     if imageShapeLen == 2:
         plotName = 'Gray level'
-        plottingData = PlottingData(plotName, image[leftClickPosition.y], pen='r')
+        plottingData = PlottingData(
+            plotName, image[leftClickPosition.y], pen='r')
         plotDataItemsList.append(plottingData)
 
     # Color image
     elif imageShapeLen == 3:
         plotName = 'Red channel'
-        plottingData = PlottingData(plotName, image[leftClickPosition.y, :, 0], pen='r')
+        plottingData = PlottingData(
+            plotName, image[leftClickPosition.y, :, 0], pen='r')
         plotDataItemsList.append(plottingData)
 
         plotName = 'Green channel'
-        plottingData = PlottingData(plotName, image[leftClickPosition.y, :, 1], pen='g')
+        plottingData = PlottingData(
+            plotName, image[leftClickPosition.y, :, 1], pen='g')
         plotDataItemsList.append(plottingData)
 
         plotName = 'Blue channel'
-        plottingData = PlottingData(plotName, image[leftClickPosition.y, :, 2], pen='b')
+        plottingData = PlottingData(
+            plotName, image[leftClickPosition.y, :, 2], pen='b')
         plotDataItemsList.append(plottingData)
 
     return {
@@ -71,21 +75,25 @@ def plotColumnValues(image, leftClickPosition):
     imageShapeLen = len(image.shape)
     if imageShapeLen == 2:
         plotName = 'Gray level'
-        plottingData = PlottingData(plotName, image[:, leftClickPosition.x], pen='r')
+        plottingData = PlottingData(
+            plotName, image[:, leftClickPosition.x], pen='r')
         plotDataItemsList.append(plottingData)
 
     # Color image
     elif imageShapeLen == 3:
         plotName = 'Red channel'
-        plottingData = PlottingData(plotName, image[:, leftClickPosition.x, 0], pen='r')
+        plottingData = PlottingData(
+            plotName, image[:, leftClickPosition.x, 0], pen='r')
         plotDataItemsList.append(plottingData)
 
         plotName = 'Green channel'
-        plottingData = PlottingData(plotName, image[:, leftClickPosition.x, 1], pen='g')
+        plottingData = PlottingData(
+            plotName, image[:, leftClickPosition.x, 1], pen='g')
         plotDataItemsList.append(plottingData)
 
         plotName = 'Blue channel'
-        plottingData = PlottingData(plotName, image[:, leftClickPosition.x, 2], pen='b')
+        plottingData = PlottingData(
+            plotName, image[:, leftClickPosition.x, 2], pen='b')
         plotDataItemsList.append(plottingData)
 
     return {
@@ -122,17 +130,20 @@ def plotHistogramRGB(image):
 
     # Color image
     elif imageShapeLen == 3:
-        histogram = np.histogram(image[:, :, 0], bins=range(257), range=(-1, 255))[0]
+        histogram = np.histogram(
+            image[:, :, 0], bins=range(257), range=(-1, 255))[0]
         plotName = 'Red histogram'
         plottingData = PlottingData(plotName, histogram, pen='r')
         plotDataItemsList.append(plottingData)
 
-        histogram = np.histogram(image[:, :, 1], bins=range(257), range=(-1, 255))[0]
+        histogram = np.histogram(
+            image[:, :, 1], bins=range(257), range=(-1, 255))[0]
         plotName = 'Green histogram'
         plottingData = PlottingData(plotName, histogram, pen='g')
         plotDataItemsList.append(plottingData)
 
-        histogram = np.histogram(image[:, :, 2], bins=range(257), range=(-1, 255))[0]
+        histogram = np.histogram(
+            image[:, :, 2], bins=range(257), range=(-1, 255))[0]
         plotName = 'Blue histogram'
         plottingData = PlottingData(plotName, histogram, pen='b')
         plotDataItemsList.append(plottingData)
@@ -140,6 +151,7 @@ def plotHistogramRGB(image):
     return {
         'plottingDataList': plotDataItemsList
     }
+
 
 @PlotterFunction(name="Plot histograms (HSV)", computeOnImageChanged=True)
 def plotHistogramHSV(image):
@@ -154,8 +166,8 @@ def plotHistogramHSV(image):
         plotDataItemsList.append(plottingData)
 
     if imageShapeLen == 3:
-
-        histogram = np.histogram(v[:, :, 2], bins=range(256), range=(0, 256))[0]
+        v = [ [ np.max(image[i, j]) for j in range(image.shape[1]) ] for i in range(image.shape[0])]
+        histogram = np.histogram(v, bins=range(256), range=(0, 256))[0]
         plotName = 'Value histogram'
         plottingData = PlottingData(plotName, histogram, pen='w')
         plotDataItemsList.append(plottingData)
@@ -167,11 +179,13 @@ def plotHistogramHSV(image):
 
     return {
         'plottingDataList': plotDataItemsList
-    }       
+    }
+
 
 @PlotterFunction(name="Plot sine function")
 def plotSine(image):
-    plottingData = PlottingData("Sine function", [np.sin(x) for x in np.arange(0, 2 * np.pi, 0.01)], pen='b')
+    plottingData = PlottingData("Sine function", [np.sin(
+        x) for x in np.arange(0, 2 * np.pi, 0.01)], pen='b')
     return {
         'plottingDataList': [plottingData]
     }
