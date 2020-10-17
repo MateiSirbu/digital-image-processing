@@ -1,4 +1,5 @@
-import numpy
+import numpy as np
+import matplotlib as mpl
 
 from Application.Models.PlottingData import PlottingData
 from Application.Utils.PlotterDecorators import PlotterFunction
@@ -92,8 +93,8 @@ def plotColumnValues(image, leftClickPosition):
     }
 
 
-@PlotterFunction(name="Plot histogram", computeOnImageChanged=True)
-def plotHistogram(image):
+@PlotterFunction(name="Plot histograms (RGB / grayscale)", computeOnImageChanged=True)
+def plotHistogramRGB(image):
     """
     TODO: document plotHistogram
     :param image:
@@ -110,32 +111,67 @@ def plotHistogram(image):
 
     # Grayscale image
     if imageShapeLen == 2:
-        # numpy.histogram returns the histogram first and the buckets second
+        # np.histogram returns the histogram first and the buckets second
         # the last bin is shared between the last two elements, so we need one more
         # range(256) gives us [0, ..., 255], so we need range(257)
         # the first element in the range parameter needs to be lower than the first needed element
-        histogram = numpy.histogram(image, bins=range(257), range=(-1, 255))[0]
+        histogram = np.histogram(image, bins=range(257), range=(-1, 255))[0]
         plotName = 'Gray histogram'
         plottingData = PlottingData(plotName, histogram, pen='r')
         plotDataItemsList.append(plottingData)
 
     # Color image
     elif imageShapeLen == 3:
-        histogram = numpy.histogram(image[:, :, 0], bins=range(257), range=(-1, 255))[0]
+        histogram = np.histogram(image[:, :, 0], bins=range(257), range=(-1, 255))[0]
         plotName = 'Red histogram'
         plottingData = PlottingData(plotName, histogram, pen='r')
         plotDataItemsList.append(plottingData)
 
-        histogram = numpy.histogram(image[:, :, 1], bins=range(257), range=(-1, 255))[0]
+        histogram = np.histogram(image[:, :, 1], bins=range(257), range=(-1, 255))[0]
         plotName = 'Green histogram'
         plottingData = PlottingData(plotName, histogram, pen='g')
         plotDataItemsList.append(plottingData)
 
-        histogram = numpy.histogram(image[:, :, 2], bins=range(257), range=(-1, 255))[0]
+        histogram = np.histogram(image[:, :, 2], bins=range(257), range=(-1, 255))[0]
         plotName = 'Blue histogram'
         plottingData = PlottingData(plotName, histogram, pen='b')
         plotDataItemsList.append(plottingData)
 
     return {
         'plottingDataList': plotDataItemsList
+    }
+
+@PlotterFunction(name="Plot histograms (HSV)", computeOnImageChanged=True)
+def plotHistogramHSV(image):
+    imageShapeLen = len(image.shape)
+    no_pixels = image.shape[0] * image.shape[1]
+    plotDataItemsList = []
+
+    if imageShapeLen == 2:
+        histogram = []
+        plotName = 'No histogram available (grayscale image)'
+        plottingData = PlottingData(plotName, histogram, pen='w')
+        plotDataItemsList.append(plottingData)
+
+    if imageShapeLen == 3:
+
+        histogram = np.histogram(v[:, :, 2], bins=range(256), range=(0, 256))[0]
+        plotName = 'Value histogram'
+        plottingData = PlottingData(plotName, histogram, pen='w')
+        plotDataItemsList.append(plottingData)
+
+        histogram = np.cumsum(histogram/no_pixels)
+        plotName = 'Value histogram, cumulative'
+        plottingData = PlottingData(plotName, histogram, pen='y')
+        plotDataItemsList.append(plottingData)
+
+    return {
+        'plottingDataList': plotDataItemsList
+    }       
+
+@PlotterFunction(name="Plot sine function")
+def plotSine(image):
+    plottingData = PlottingData("Sine function", [np.sin(x) for x in np.arange(0, 2 * np.pi, 0.01)], pen='b')
+    return {
+        'plottingDataList': [plottingData]
     }
