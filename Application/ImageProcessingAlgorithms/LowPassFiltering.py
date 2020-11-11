@@ -39,7 +39,7 @@ def gaussianFilter(f, sigma):
                             col = f.shape[1] - (col - f.shape[1] + 1)
                         else: pass                # pixel inside bounds, do not modify index
                         processed_pixel = processed_pixel + (h[i][j] * f[ln][col])
-                g[x][y] = int(processed_pixel)
+                g[x][y] = np.round(processed_pixel)
     else:                                             # if image is color...
         for x in range(0, g.shape[0]):                # traverse blurred image
             for y in range(0, g.shape[1]):
@@ -60,7 +60,7 @@ def gaussianFilter(f, sigma):
                                 col = f.shape[1] - (col - f.shape[1] + 1)
                             else: pass                # pixel inside bounds, do not modify index
                             processed_pixel[channel] = processed_pixel[channel] + (h[i][j] * f[ln][col][channel])
-                g[x][y] = np.asarray(processed_pixel).astype(int)
+                g[x][y] = np.round(np.asarray(processed_pixel))
 
     return {
             'processedImage': g
