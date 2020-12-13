@@ -66,34 +66,30 @@ def highPassFiltering(f, T1):
                                                [yPlus1]) - int(f[xPlus1][yMinus1])
             # adding gradient of pixel to matrix
             gradients[x][y] = np.sqrt((f_x ** 2) + (f_y ** 2))
-            # computing contour angles
+            # computing gradient angles
             if (f_x == 0):
-                angles[x][y] = 2     # vertical contour
+                angles[x][y] = 2     # horizontal gradient
             else:
                 theta = np.arctan(f_y/f_x)
                 if ((theta >= -3 * np.pi/8) and (theta < -np.pi/8)):
-                    angles[x][y] = 1  # NE-heading contour
+                    angles[x][y] = 1  # NE-heading gradient
                 elif ((theta >= -np.pi/8) and (theta < np.pi/8)):
-                    angles[x][y] = 0  # horizontal contour
+                    angles[x][y] = 2  # horizontal gradient
                 elif ((theta >= np.pi/8) and (theta < 3 * np.pi/8)):
-                    angles[x][y] = 3  # SE-heading contour
+                    angles[x][y] = 3  # SE-heading gradient
                 else:
-                    angles[x][y] = 2  # vertical contour
-    # scaling up the gradients, then returning the results
-    gradients = gradients / gradients.max() * 255
+                    angles[x][y] = 0  # vertical gradient
     # removing pixels below threshold T1; suppressing them during the next step is useless
     gradients[gradients <= T1] = 0
-    return gradients.astype(np.ubyte), angles
+    return gradients, angles
 
 
 def nonMaximaSuppression(g, a):
-    x_end = g.shape[0] - 1
-    y_end = g.shape[1] - 1
     # making contours 1 pixel wide...
     for x in range(0, g.shape[0]):
         for y in range(0, g.shape[1]):
             if (g[x][y] != 0):
-                if (a[x][y] == 2):                             # vertical contour => horizontal gradient & mask
+                if (a[x][y] == 0):                             # vertical contour => horizontal gradient & mask
                     for y_mask in range(y - 2, y + 3):         # linear mask traversal
                         if (y_mask < 0): continue              # mask hit edge, move on: mask can't be used yet
                         elif (y_mask >= g.shape[1]): break     # mask hit edge, halt: mask ends here
@@ -101,7 +97,7 @@ def nonMaximaSuppression(g, a):
                             if (g[x][y_mask] > g[x][y]):
                                 g[x][y] = 0
                                 break
-                elif (a[x][y] == 0):                           # horizontal contour => vertical gradient & mask
+                elif (a[x][y] == 2):                           # horizontal contour => vertical gradient & mask
                     for x_mask in range(x - 2, x + 3):         # linear mask traversal
                         if (x_mask < 0): continue              # mask hit edge, move on: mask can't be used yet
                         elif (x_mask >= g.shape[0]): break     # mask hit edge, halt: mask ends here
@@ -109,7 +105,7 @@ def nonMaximaSuppression(g, a):
                             if (g[x_mask][y] > g[x][y]):
                                 g[x][y] = 0
                                 break
-                elif (a[x][y] == 3):                           # SE-heading contour => NE-heading gradient & mask
+                elif (a[x][y] == 1):                           # SE-heading contour => NE-heading gradient & mask
                     for k in range(-2, 3):                     # diagonal mask traversal
                         x_mask = x - k
                         y_mask = y + k
@@ -118,7 +114,7 @@ def nonMaximaSuppression(g, a):
                         elif (x_mask < 0): break               # mask hit edge, halt: mask ends here
                         elif (y_mask >= g.shape[1]): break     # mask hit edge, halt: mask ends here
                         else:                                  # mask inside picture, attempt suppression
-                            if (g[x_mask][y] > g[x][y]):
+                            if (g[x_mask][y_mask] > g[x][y]):
                                 g[x][y] = 0
                                 break
                 else:                                          # NE-heading contour => SE-heading gradient & mask
@@ -130,7 +126,7 @@ def nonMaximaSuppression(g, a):
                         elif (x_mask >= g.shape[0]): break     # mask hit edge, halt: mask ends here
                         elif (y_mask >= g.shape[1]): break     # mask hit edge, halt: mask ends here
                         else:                                  # mask inside picture, attempt suppression
-                            if (g[x_mask][y] > g[x][y]):
+                            if (g[x_mask][y_mask] > g[x][y]):
                                 g[x][y] = 0
                                 break
     # returning updated picture, with thinned contours 
@@ -153,8 +149,8 @@ def hysteresisThresholding(g, T2):
         ln = point[0]
         col = point[1]
         # ...and query their neighbours
-        for x in range(-1, 2):
-            for y in range(-1, 2):
+        for x in range(-4, 5):
+            for y in range(-4, 5):
                 if (((x == 0) and (y == 0)) or (ln + x < 0) or (ln + x > ln_end) \
                     or (col + y < 0) or (col + y > col_end)): # if hitting boundary, check next neighbor
                     continue
@@ -200,5 +196,5 @@ def canny(image, T1, T2):
         image = hysteresisThresholding(image, T2)
         print('Done. Displaying extracted contours.')
         return {
-            'processedImage': image
+            'processedImage': image.astype(np.ubyte)
         }
