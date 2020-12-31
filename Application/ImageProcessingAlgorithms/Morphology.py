@@ -51,9 +51,10 @@ def erode(f):
 
 @RegisterAlgorithm("Closing", "Morphology")
 @OutputDialog(title="Closing output")
-def closing(image):
+@InputDialog(threshold=int)
+def closing(image, threshold):
     if len(image.shape) == 2:
-        image = binarization(image, 128)
+        image = binarization(image, threshold)
         image = dilate(image)
         image = erode(image)
         return {
