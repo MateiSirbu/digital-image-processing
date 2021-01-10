@@ -6,16 +6,13 @@ import matplotlib.cm as cm
 import numpy as np
 import scipy.ndimage as ndimage
 
-
 def plotMatrix(hough, diag):
     fig, ax = plt.subplots(1, 1)
-    ax.imshow(hough.astype('uint8'), cmap=cm.gray, extent=(-90,
-                                                           90, -diag, diag), aspect=180/(2 * diag), vmin=0, vmax=255)
+    ax.imshow(hough.astype('uint8'), cmap=cm.gray, extent=(-90, 90, -diag, diag), aspect=180/(2 * diag), vmin=0, vmax=255)
     ax.set_title('Matricea Hough rapidă')
     ax.set_xlabel("theta")
     ax.set_ylabel("raza")
     plt.show()
-
 
 @RegisterAlgorithm("Fast Hough Transform", "Segmentation")
 @InputDialog(sobel_threshold=int, hough_threshold=int)
@@ -25,7 +22,7 @@ def fastHough(f, sobel_threshold, hough_threshold=int):
         return {
             'outputMessage': "Error: image should be grayscale."
         }
-    if (sobel_threshold < 0 or sobel_threshold > 255):
+    if (sobel_threshold < 0 or sobel_threshold > 255 or hough_threshold < 0 or hough_threshold > 255):
         return {
             'outputMessage': "Error: thresholds should be greater than 0 and less than 255."
         }
