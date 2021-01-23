@@ -1,3 +1,21 @@
+# Digital Image Processing Algorithms
+
+![Digital Image Processing](./README/image-processing.png)
+
+Various digital image processing algorithms. This repository includes my implementations of:
+- [Histogram equalization in the HSV color space](./Application/ImageProcessingAlgorithms/PointwiseOperations.py)
+- [Thresholding using Ōtsu's technique](./Application/ImageProcessingAlgorithms/Thresholding.py)
+- [Gaussian blur](./Application/ImageProcessingAlgorithms/LowPassFiltering.py)
+- [Canny edge detection](./Application/ImageProcessingAlgorithms/HighPassFiltering.py)
+- [Closing of an image in the context of morphology](./Application/ImageProcessingAlgorithms/Morphology.py)
+- [Bicubic interpolation](./Application/ImageProcessingAlgorithms/GeomTransform.py)
+- [Fast Hough transform](./Application/ImageProcessingAlgorithms/Segmentation.py)
+
+The Python software used while implementing the algorithms was created by [Cosmin Polifronie](https://github.com/cosminpolifronie). The project description provided by him, as of commit [1a6b881](https://github.com/unitbvcv/image_processing_platform/tree/1a6b88160ff3fa8048a3c0775a7333583b2b3228), is as follows:
+<br><br>
+
+
+
 # Image Processing Platform
 ## Romanian Guide
 An application guide in Romanian can be found here: [doc/ghid_utilizare.pdf](doc/ghid_utilizare.pdf)
